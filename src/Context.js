@@ -10,6 +10,15 @@ class RoomProvider extends Component {
     sortedRooms: [],
     featuredRooms: [],
     loading: true,
+    type: "all",
+    capacity: 1,
+    price: 0,
+    minPrice: 0,
+    maxPrice: 0,
+    minSize: 0,
+    maxSize: 0,
+    breakfast: false,
+    pets: false,
   };
 
   componentDidMount() {
@@ -17,17 +26,33 @@ class RoomProvider extends Component {
     let rooms = this.formatData(items);
     // console.log(rooms);
     let featuredRooms = rooms.filter((room) => room.featured === true);
+
+    let maxPrice = Math.max(...rooms.map((item) => item.price));
+    let maxSize = Math.max(...rooms.map((item) => item.size));
     this.setState({
       rooms,
       featuredRooms,
       sortedRooms: rooms,
       loading: false,
+      price: maxPrice,
+      maxPrice,
+      maxSize,
     });
   }
   getRoom = (slug) => {
     let tempRooms = [...this.state.rooms];
     const room = tempRooms.find((room) => room.slug === slug);
     return room;
+  };
+
+  handleChange = (e) => {
+    const type = e.target.type;
+    const name = e.target.name;
+    const value = e.target.value;
+    console.log(type, name, value);
+  };
+  filterRooms = () => {
+    console.log("filterRoom");
   };
   formatData(items) {
     let tempItems = items.map((item) => {
@@ -45,6 +70,7 @@ class RoomProvider extends Component {
         value={{
           ...this.state,
           getRoom: this.getRoom,
+          handleChange: this.handleChange,
         }}
       >
         {this.props.children}
